@@ -152,6 +152,48 @@ export const markExpensePaid = async (id) => {
   return updateExpense(id, updates);
 };
 
+export const markExpenseUnpaid = async (id) => {
+  const updates = {
+    paid_amount: 0,
+    remaining_balance: null, // Will be recalculated
+    payment_status: 'Unpaid'
+  };
+  
+  // Get expense to recalculate
+  const expense = await db.getExpenseById(id);
+  if (expense) {
+    updates.remaining_balance = expense.amount;
+  }
+  
+  return updateExpense(id, updates);
+};
+
+export const settleAllByPerson = async (paidBy) => {
+  if (!isOnline) {
+    // Offline: update locally
+    const expenses = await db.getAllExpenses({ to_be_paid_by: paidBy });
+    let count = 0;
+    for (const exp of expenses) {
+      if (exp.payment_status !== 'Paid') {
+        await db.updateExpense(exp.id, {
+          paid_amount: exp.amount,
+          remaining_balance: 0,
+          payment_status: 'Paid'
+        });
+        count++;
+      }
+    }
+    return { updated_count: count };
+  }
+  
+  try {
+    return await apiRequest('PUT', `/expenses/settle-all/${paidBy}`);
+  } catch (error) {
+    console.log('Failed to settle all on server');
+    throw error;
+  }
+};
+
 // Sync functions
 export const syncToServer = async () => {
   if (!isOnline) {
