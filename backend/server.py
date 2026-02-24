@@ -380,6 +380,47 @@ async def mark_expense_paid(expense_id: str):
     
     return {"message": "Expense marked as paid"}
 
+@api_router.put("/expenses/{expense_id}/mark-unpaid")
+async def mark_expense_unpaid(expense_id: str):
+    expense = await db.expenses.find_one({"id": expense_id}, {"_id": 0})
+    if not expense:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    
+    update_dict = {
+        "paid_amount": 0,
+        "remaining_balance": expense["amount"],
+        "payment_status": "Unpaid",
+        "synced_to_sheet": False
+    }
+    
+    await db.expenses.update_one({"id": expense_id}, {"$set": update_dict})
+    
+    updated_expense = await db.expenses.find_one({"id": expense_id}, {"_id": 0})
+    if updated_expense.get("sheet_row_number"):
+        success = await update_sheet_row(updated_expense["sheet_row_number"], updated_expense)
+        if success:
+            await db.expenses.update_one({"id": expense_id}, {"$set": {"synced_to_sheet": True}})
+    
+    return {"message": "Expense marked as unpaid"}
+
+@api_router.put("/expenses/settle-all/{paid_by}")
+async def settle_all_by_person(paid_by: str):
+    """Mark all unpaid expenses for a person as paid"""
+    result = await db.expenses.update_many(
+        {"to_be_paid_by": paid_by, "payment_status": {"$ne": "Paid"}},
+        {"$set": {"payment_status": "Paid", "paid_amount": 0, "remaining_balance": 0, "synced_to_sheet": False}}
+    )
+    
+    # Update paid_amount to match amount for each expense
+    expenses = await db.expenses.find({"to_be_paid_by": paid_by}, {"_id": 0}).to_list(10000)
+    for expense in expenses:
+        await db.expenses.update_one(
+            {"id": expense["id"]},
+            {"$set": {"paid_amount": expense["amount"], "remaining_balance": 0}}
+        )
+    
+    return {"message": f"Settled all for {paid_by}", "updated_count": result.modified_count}
+
 # Sync endpoints
 @api_router.post("/sync/bulk")
 async def sync_bulk_expenses(sync_data: SyncRequest):
