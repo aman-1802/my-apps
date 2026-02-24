@@ -421,6 +421,20 @@ async def settle_all_by_person(paid_by: str):
     
     return {"message": f"Settled all for {paid_by}", "updated_count": result.modified_count}
 
+@api_router.delete("/expenses/delete-all/{paid_by}")
+async def delete_all_by_person(paid_by: str):
+    """Delete all expenses for a person"""
+    # Get expenses to delete from sheet
+    expenses = await db.expenses.find({"to_be_paid_by": paid_by}, {"_id": 0}).to_list(10000)
+    
+    for expense in expenses:
+        if expense.get("sheet_row_number"):
+            await delete_sheet_row(expense["sheet_row_number"])
+    
+    result = await db.expenses.delete_many({"to_be_paid_by": paid_by})
+    
+    return {"message": f"Deleted all for {paid_by}", "deleted_count": result.deleted_count}
+
 # Sync endpoints
 @api_router.post("/sync/bulk")
 async def sync_bulk_expenses(sync_data: SyncRequest):
