@@ -135,6 +135,17 @@ async def sync_expense_to_sheet(expense: dict) -> Optional[int]:
         service = get_sheets_service()
         sheet = service.spreadsheets()
         
+        # First, find the next empty row
+        def get_next_row():
+            result = sheet.values().get(
+                spreadsheetId=GOOGLE_SHEET_ID,
+                range=f"{GOOGLE_SHEET_NAME}!A:A"
+            ).execute()
+            values = result.get('values', [])
+            return len(values) + 1
+        
+        next_row = await asyncio.to_thread(get_next_row)
+        
         # Prepare row data matching the sheet columns
         row_data = [
             expense.get("serial_number", ""),
@@ -154,31 +165,17 @@ async def sync_expense_to_sheet(expense: dict) -> Optional[int]:
             expense.get("id", "")  # Store expense ID for reference
         ]
         
-        # Append to sheet
-        def do_append():
-            return sheet.values().append(
+        # Write to specific row
+        def do_write():
+            return sheet.values().update(
                 spreadsheetId=GOOGLE_SHEET_ID,
-                range=f"{GOOGLE_SHEET_NAME}!A:O",
+                range=f"{GOOGLE_SHEET_NAME}!A{next_row}:O{next_row}",
                 valueInputOption="USER_ENTERED",
-                insertDataOption="INSERT_ROWS",
                 body={"values": [row_data]}
             ).execute()
         
-        result = await asyncio.to_thread(do_append)
-        
-        # Get the row number from the updated range (e.g., "Expense_Data!A7:O7" or "Expense_Data!AM1013:AO1013")
-        updated_range = result.get("updates", {}).get("updatedRange", "")
-        if updated_range:
-            try:
-                # Extract row number using regex
-                import re
-                match = re.search(r'(\d+)', updated_range.split("!")[-1])
-                if match:
-                    row_number = int(match.group(1))
-                    return row_number
-            except:
-                pass
-        return None
+        await asyncio.to_thread(do_write)
+        return next_row
     except Exception as e:
         logger.error(f"Error syncing to sheet: {e}")
         return None
