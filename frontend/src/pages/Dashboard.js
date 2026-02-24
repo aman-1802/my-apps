@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { getExpenses, getAnalyticsSummary, getSettlementSummary, markExpensePaid, markExpenseUnpaid, deleteExpense, getAllTags, settleAllByPerson } from "@/lib/api";
+import { getExpenses, getAnalyticsSummary, getSettlementSummary, markExpensePaid, markExpenseUnpaid, deleteExpense, getAllTags, settleAllByPerson, deleteAllByPerson } from "@/lib/api";
 import { useSync } from "@/context/SyncContext";
 import StatsCards from "@/components/StatsCards";
 import SettlementCards from "@/components/SettlementCards";
@@ -79,6 +79,18 @@ const Dashboard = ({ onEditExpense }) => {
     }
   };
 
+  const handleDeleteAllByPerson = async (paidBy) => {
+    try {
+      const result = await deleteAllByPerson(paidBy);
+      toast.success(`Deleted ${result.deleted_count} expenses for ${paidBy}`);
+      triggerSync();
+      loadData();
+    } catch (error) {
+      console.error('Error deleting all:', error);
+      toast.error('Failed to delete');
+    }
+  };
+
   const handleDeleteClick = (expenseId) => {
     setDeleteDialog({ open: true, expenseId });
   };
@@ -108,7 +120,7 @@ const Dashboard = ({ onEditExpense }) => {
       <StatsCards analytics={analytics} />
 
       {/* Settlement Summary */}
-      <SettlementCards settlement={settlement} onSettleAll={handleSettleAll} />
+      <SettlementCards settlement={settlement} onSettleAll={handleSettleAll} onDeleteAll={handleDeleteAllByPerson} />
 
       {/* Filters */}
       <FilterPanel
