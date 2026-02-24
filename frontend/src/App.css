@@ -1,34 +1,228 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* App-specific styles */
+
+/* Prevent text selection on interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* iOS-style active state */
+.ios-active:active {
+  opacity: 0.7;
+  transition: opacity 100ms ease;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Swipeable item styles */
+.swipe-container {
+  position: relative;
+  overflow: hidden;
 }
 
-.App-link {
-    color: #61dafb;
+.swipe-background {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.swipe-background-left {
+  right: 0;
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+}
+
+.swipe-background-right {
+  left: 0;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.swipe-content {
+  position: relative;
+  background-color: hsl(var(--card));
+  transition: transform 200ms ease-out;
+  z-index: 1;
+}
+
+/* Category badge colors */
+.badge-food { background-color: #FEF3C7; color: #92400E; }
+.badge-rent { background-color: #DBEAFE; color: #1E40AF; }
+.badge-subscriptions { background-color: #F3E8FF; color: #6B21A8; }
+.badge-dinner { background-color: #FCE7F3; color: #9D174D; }
+.badge-blinkit { background-color: #D1FAE5; color: #065F46; }
+.badge-travel { background-color: #E0E7FF; color: #3730A3; }
+.badge-utilities { background-color: #FEE2E2; color: #991B1B; }
+.badge-shopping { background-color: #CFFAFE; color: #155E75; }
+.badge-other { background-color: #F3F4F6; color: #374151; }
+
+.dark .badge-food { background-color: #78350F; color: #FEF3C7; }
+.dark .badge-rent { background-color: #1E3A8A; color: #DBEAFE; }
+.dark .badge-subscriptions { background-color: #581C87; color: #F3E8FF; }
+.dark .badge-dinner { background-color: #831843; color: #FCE7F3; }
+.dark .badge-blinkit { background-color: #064E3B; color: #D1FAE5; }
+.dark .badge-travel { background-color: #312E81; color: #E0E7FF; }
+.dark .badge-utilities { background-color: #7F1D1D; color: #FEE2E2; }
+.dark .badge-shopping { background-color: #164E63; color: #CFFAFE; }
+.dark .badge-other { background-color: #374151; color: #F3F4F6; }
+
+/* Payment status colors */
+.status-paid {
+  color: #059669;
+  background-color: #D1FAE5;
+}
+
+.status-partially-paid {
+  color: #D97706;
+  background-color: #FEF3C7;
+}
+
+.status-unpaid {
+  color: #DC2626;
+  background-color: #FEE2E2;
+}
+
+.dark .status-paid {
+  color: #34D399;
+  background-color: #064E3B;
+}
+
+.dark .status-partially-paid {
+  color: #FBBF24;
+  background-color: #78350F;
+}
+
+.dark .status-unpaid {
+  color: #F87171;
+  background-color: #7F1D1D;
+}
+
+/* Chart container */
+.chart-container {
+  width: 100%;
+  height: 250px;
+}
+
+@media (min-width: 640px) {
+  .chart-container {
+    height: 300px;
+  }
+}
+
+/* Amount input */
+.amount-input {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: hsl(var(--foreground));
+}
+
+.amount-input::placeholder {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.3;
+}
+
+/* Filter tag */
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+  transition: all 150ms ease;
+}
+
+.filter-tag:hover {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.filter-tag.active {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+/* Animated gradient background for cards */
+.gradient-card {
+  background: linear-gradient(135deg, 
+    hsl(var(--card)) 0%, 
+    hsl(var(--muted)) 100%
+  );
+}
+
+/* Expense list animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.expense-item {
+  animation: slideIn 200ms ease-out;
+  animation-fill-mode: backwards;
+}
+
+.expense-item:nth-child(1) { animation-delay: 0ms; }
+.expense-item:nth-child(2) { animation-delay: 50ms; }
+.expense-item:nth-child(3) { animation-delay: 100ms; }
+.expense-item:nth-child(4) { animation-delay: 150ms; }
+.expense-item:nth-child(5) { animation-delay: 200ms; }
+
+/* Modal/Drawer animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.drawer-content {
+  animation: slideUp 300ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Sync indicator pulse */
+@keyframes syncPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.sync-indicator {
+  animation: syncPulse 1.5s ease-in-out infinite;
+}
+
+/* Bottom nav safe area */
+.bottom-nav {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Touch feedback */
+.touch-feedback {
+  transition: transform 100ms ease, opacity 100ms ease;
+}
+
+.touch-feedback:active {
+  transform: scale(0.97);
+  opacity: 0.8;
 }

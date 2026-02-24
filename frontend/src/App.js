@@ -1,53 +1,146 @@
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
+import { initDB } from "@/lib/indexedDB";
+import { syncToServer, getNetworkStatus, getUnsyncedCount } from "@/lib/api";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Components
+import Header from "@/components/Header";
+import BottomNav from "@/components/BottomNav";
+import FloatingActionButton from "@/components/FloatingActionButton";
+import ExpenseForm from "@/components/ExpenseForm";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+// Pages
+import Dashboard from "@/pages/Dashboard";
+import Analytics from "@/pages/Analytics";
+import Settings from "@/pages/Settings";
 
+// Theme context
+import { ThemeProvider } from "@/context/ThemeContext";
+import { SyncProvider } from "@/context/SyncContext";
+
+function AppContent() {
+  const [showExpenseForm, setShowExpenseForm] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const location = useLocation();
+
+  // Initialize IndexedDB on mount
   useEffect(() => {
-    helloWorldApi();
+    initDB().catch(console.error);
   }, []);
 
+  // Register service worker
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then((registration) => {
+          console.log('SW registered:', registration);
+        })
+        .catch((error) => {
+          console.log('SW registration failed:', error);
+        });
+    }
+  }, []);
+
+  // Listen for service worker sync messages
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'SYNC_REQUESTED') {
+          syncToServer();
+        }
+      });
+    }
+  }, []);
+
+  const handleAddExpense = () => {
+    setEditingExpense(null);
+    setShowExpenseForm(true);
+  };
+
+  const handleEditExpense = (expense) => {
+    setEditingExpense(expense);
+    setShowExpenseForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setShowExpenseForm(false);
+    setEditingExpense(null);
+  };
+
+  const handleExpenseSaved = useCallback(() => {
+    setShowExpenseForm(false);
+    setEditingExpense(null);
+    setRefreshKey(prev => prev + 1);
+  }, []);
+
+  const showFAB = location.pathname === '/' || location.pathname === '/dashboard';
+
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
+    <div className="min-h-screen bg-background pb-safe">
+      <Header />
+      
+      <main className="pt-16 pb-20">
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <Dashboard 
+                key={refreshKey}
+                onEditExpense={handleEditExpense} 
+              />
+            } 
+          />
+          <Route 
+            path="/dashboard" 
+            element={
+              <Dashboard 
+                key={refreshKey}
+                onEditExpense={handleEditExpense} 
+              />
+            } 
+          />
+          <Route path="/analytics" element={<Analytics key={refreshKey} />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </main>
+
+      <BottomNav />
+      
+      {showFAB && (
+        <FloatingActionButton onClick={handleAddExpense} />
+      )}
+
+      <ExpenseForm
+        open={showExpenseForm}
+        onClose={handleCloseForm}
+        expense={editingExpense}
+        onSave={handleExpenseSaved}
+      />
+
+      <Toaster 
+        position="top-center" 
+        richColors 
+        closeButton
+        toastOptions={{
+          className: 'font-sans'
+        }}
+      />
     </div>
   );
-};
+}
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <ThemeProvider>
+      <SyncProvider>
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </SyncProvider>
+    </ThemeProvider>
   );
 }
 

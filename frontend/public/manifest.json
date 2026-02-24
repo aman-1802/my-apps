@@ -1,0 +1,26 @@
+{
+  "short_name": "ExpenseTracker",
+  "name": "Expense Tracker PWA",
+  "description": "Personal expense tracking with Google Sheets sync",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0F766E",
+  "background_color": "#F5F7FA",
+  "orientation": "portrait",
+  "scope": "/",
+  "prefer_related_applications": false
+}
