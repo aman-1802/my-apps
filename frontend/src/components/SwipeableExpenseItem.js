@@ -1,15 +1,17 @@
 import { useState, useRef } from "react";
-import { Check, Trash2, Edit2 } from "lucide-react";
+import { Check, Trash2, Edit2, Undo2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SWIPE_THRESHOLD = 80;
 
-const SwipeableExpenseItem = ({ expense, onMarkPaid, onDelete, onEdit, children }) => {
+const SwipeableExpenseItem = ({ expense, onMarkPaid, onMarkUnpaid, onDelete, onEdit, children }) => {
   const [swipeX, setSwipeX] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
   const startX = useRef(0);
   const startY = useRef(0);
   const isHorizontalSwipe = useRef(null);
+
+  const isPaid = expense.payment_status === 'Paid';
 
   const handleTouchStart = (e) => {
     startX.current = e.touches[0].clientX;
@@ -49,15 +51,19 @@ const SwipeableExpenseItem = ({ expense, onMarkPaid, onDelete, onEdit, children 
       return;
     }
 
-    // Right swipe - Mark as paid
+    // Right swipe - Mark as paid (only if not already paid)
     if (swipeX > SWIPE_THRESHOLD) {
-      if (expense.payment_status !== 'Paid') {
+      if (!isPaid) {
         onMarkPaid(expense.id);
       }
     }
-    // Left swipe - Delete
+    // Left swipe - If paid → mark unpaid, if unpaid → delete
     else if (swipeX < -SWIPE_THRESHOLD) {
-      onDelete(expense.id);
+      if (isPaid) {
+        onMarkUnpaid(expense.id);
+      } else {
+        onDelete(expense.id);
+      }
     }
     // Half swipe right - Edit
     else if (swipeX > 40 && swipeX <= SWIPE_THRESHOLD) {
@@ -91,16 +97,20 @@ const SwipeableExpenseItem = ({ expense, onMarkPaid, onDelete, onEdit, children 
           </span>
         </div>
         
-        {/* Left swipe background (Delete) */}
+        {/* Left swipe background (Delete or Mark Unpaid) */}
         <div 
           className={cn(
             "flex items-center justify-end pr-6 flex-1",
-            "bg-red-500 text-white transition-opacity",
+            "transition-opacity",
+            isPaid ? "bg-amber-500" : "bg-red-500",
+            "text-white",
             swipeX < 0 ? "opacity-100" : "opacity-0"
           )}
         >
-          <span className="mr-2 font-medium text-sm">Delete</span>
-          <Trash2 className="w-5 h-5" />
+          <span className="mr-2 font-medium text-sm">
+            {isPaid ? 'Mark Unpaid' : 'Delete'}
+          </span>
+          {isPaid ? <Undo2 className="w-5 h-5" /> : <Trash2 className="w-5 h-5" />}
         </div>
       </div>
 

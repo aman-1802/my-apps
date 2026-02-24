@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import SwipeableExpenseItem from "./SwipeableExpenseItem";
 import { AlertCircle, Clock, CheckCircle2 } from "lucide-react";
 
-const ExpenseList = ({ expenses, onMarkPaid, onDelete, onEdit }) => {
+const ExpenseList = ({ expenses, onMarkPaid, onMarkUnpaid, onDelete, onEdit }) => {
   if (!expenses || expenses.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -87,6 +87,7 @@ const ExpenseList = ({ expenses, onMarkPaid, onDelete, onEdit }) => {
               key={expense.id}
               expense={expense}
               onMarkPaid={onMarkPaid}
+              onMarkUnpaid={onMarkUnpaid}
               onDelete={onDelete}
               onEdit={onEdit}
             >
