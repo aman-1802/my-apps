@@ -442,6 +442,7 @@ export const getLocalSettlement = async () => {
     mom_owes: 0,
     dad_owes: 0,
     i_owe: 0,
+    others_owe: 0,
     total_settled: 0
   };
   
@@ -452,6 +453,7 @@ export const getLocalSettlement = async () => {
     
     if (paidBy === 'Mom') settlement.mom_owes += remaining;
     else if (paidBy === 'Dad') settlement.dad_owes += remaining;
+    else if (paidBy === 'Others') settlement.others_owe += remaining;
     else settlement.i_owe += remaining;
     
     settlement.total_settled += paidAmount;

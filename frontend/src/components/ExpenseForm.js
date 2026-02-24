@@ -236,6 +236,7 @@ const ExpenseForm = ({ open, onClose, expense, onSave }) => {
                 <SelectItem value="Me">Me</SelectItem>
                 <SelectItem value="Mom">Mom</SelectItem>
                 <SelectItem value="Dad">Dad</SelectItem>
+                <SelectItem value="Others">Others</SelectItem>
               </SelectContent>
             </Select>
           </div>

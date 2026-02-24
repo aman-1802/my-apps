@@ -1,4 +1,4 @@
-import { User, Users, CheckCircle } from "lucide-react";
+import { User, Users, CheckCircle, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SettlementCards = ({ settlement }) => {
@@ -8,6 +8,7 @@ const SettlementCards = ({ settlement }) => {
     mom_owes = 0,
     dad_owes = 0,
     i_owe = 0,
+    others_owe = 0,
     total_settled = 0
   } = settlement;
 
@@ -32,6 +33,13 @@ const SettlementCards = ({ settlement }) => {
       icon: Users,
       color: 'from-amber-500/20 to-amber-600/20 border-amber-500/30',
       textColor: 'text-amber-500'
+    },
+    {
+      title: 'Others Owe',
+      value: others_owe,
+      icon: UsersRound,
+      color: 'from-purple-500/20 to-purple-600/20 border-purple-500/30',
+      textColor: 'text-purple-500'
     },
     {
       title: 'Settled',

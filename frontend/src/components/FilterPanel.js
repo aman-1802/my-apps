@@ -21,7 +21,7 @@ const MONTHS = [
 ];
 
 const PAYMENT_STATUSES = ['Paid', 'Partially Paid', 'Unpaid'];
-const PAID_BY_OPTIONS = ['Me', 'Mom', 'Dad'];
+const PAID_BY_OPTIONS = ['Me', 'Mom', 'Dad', 'Others'];
 const CATEGORIES = ['Food', 'Rent', 'Subscriptions', 'Dinner', 'Blinkit', 'Travel', 'Utilities', 'Shopping', 'Other'];
 
 const FilterPanel = ({ filters, onFilterChange, tags = [] }) => {
