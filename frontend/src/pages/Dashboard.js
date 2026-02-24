@@ -108,7 +108,7 @@ const Dashboard = ({ onEditExpense }) => {
       <StatsCards analytics={analytics} />
 
       {/* Settlement Summary */}
-      <SettlementCards settlement={settlement} />
+      <SettlementCards settlement={settlement} onSettleAll={handleSettleAll} />
 
       {/* Filters */}
       <FilterPanel
@@ -146,6 +146,7 @@ const Dashboard = ({ onEditExpense }) => {
           <ExpenseList
             expenses={expenses}
             onMarkPaid={handleMarkPaid}
+            onMarkUnpaid={handleMarkUnpaid}
             onDelete={handleDeleteClick}
             onEdit={onEditExpense}
           />
