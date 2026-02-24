@@ -132,10 +132,31 @@ async def get_next_serial_number() -> int:
 async def sync_expense_to_sheet(expense: dict) -> Optional[int]:
     """Sync a single expense to Google Sheets"""
     try:
+        # Skip if already synced
+        if expense.get("synced_to_sheet") and expense.get("sheet_row_number"):
+            return expense.get("sheet_row_number")
+        
         service = get_sheets_service()
         sheet = service.spreadsheets()
         
-        # First, find the next empty row
+        # Check if this expense ID already exists in sheet (column O)
+        def check_existing():
+            result = sheet.values().get(
+                spreadsheetId=GOOGLE_SHEET_ID,
+                range=f"{GOOGLE_SHEET_NAME}!O:O"
+            ).execute()
+            values = result.get('values', [])
+            expense_id = expense.get("id", "")
+            for i, row in enumerate(values):
+                if row and row[0] == expense_id:
+                    return i + 1  # Return existing row number
+            return None
+        
+        existing_row = await asyncio.to_thread(check_existing)
+        if existing_row:
+            return existing_row  # Already exists, return row number
+        
+        # Find the next empty row
         def get_next_row():
             result = sheet.values().get(
                 spreadsheetId=GOOGLE_SHEET_ID,
