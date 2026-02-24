@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { getExpenses, getAnalyticsSummary, getSettlementSummary, markExpensePaid, deleteExpense, getAllTags } from "@/lib/api";
+import { getExpenses, getAnalyticsSummary, getSettlementSummary, markExpensePaid, markExpenseUnpaid, deleteExpense, getAllTags, settleAllByPerson } from "@/lib/api";
 import { useSync } from "@/context/SyncContext";
 import StatsCards from "@/components/StatsCards";
 import SettlementCards from "@/components/SettlementCards";
@@ -52,6 +52,30 @@ const Dashboard = ({ onEditExpense }) => {
     } catch (error) {
       console.error('Error marking as paid:', error);
       toast.error('Failed to mark as paid');
+    }
+  };
+
+  const handleMarkUnpaid = async (expenseId) => {
+    try {
+      await markExpenseUnpaid(expenseId);
+      toast.success('Marked as unpaid');
+      triggerSync();
+      loadData();
+    } catch (error) {
+      console.error('Error marking as unpaid:', error);
+      toast.error('Failed to mark as unpaid');
+    }
+  };
+
+  const handleSettleAll = async (paidBy) => {
+    try {
+      const result = await settleAllByPerson(paidBy);
+      toast.success(`Settled ${result.updated_count} expenses for ${paidBy}`);
+      triggerSync();
+      loadData();
+    } catch (error) {
+      console.error('Error settling all:', error);
+      toast.error('Failed to settle');
     }
   };
 
