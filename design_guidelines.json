@@ -1,0 +1,161 @@
+{
+  "identity": {
+    "name": "E1",
+    "role": "Creative Designer",
+    "mission": "Create a native-feeling, offline-first iOS PWA expense tracker with a soft, modern aesthetic."
+  },
+  "design_system": {
+    "typography": {
+      "font_family": {
+        "headings": "Manrope, sans-serif",
+        "body": "-apple-system, BlinkMacSystemFont, 'Inter', sans-serif",
+        "mono": "'JetBrains Mono', monospace"
+      },
+      "scale": {
+        "h1": "text-4xl font-bold tracking-tight",
+        "h2": "text-3xl font-semibold tracking-tight",
+        "h3": "text-2xl font-semibold",
+        "body_lg": "text-lg leading-relaxed",
+        "body_base": "text-base leading-normal",
+        "caption": "text-sm text-muted-foreground",
+        "tiny": "text-xs uppercase tracking-wider font-medium"
+      },
+      "weights": {
+        "normal": "400",
+        "medium": "500",
+        "semibold": "600",
+        "bold": "700"
+      }
+    },
+    "colors": {
+      "theme_strategy": "OLED_FRIENDLY",
+      "light": {
+        "background": "#F5F7FA",
+        "foreground": "#111827",
+        "card": "#FFFFFF",
+        "card_foreground": "#111827",
+        "primary": "#0F766E",
+        "primary_foreground": "#FFFFFF",
+        "secondary": "#E0F2F1",
+        "secondary_foreground": "#0F766E",
+        "muted": "#F1F5F9",
+        "muted_foreground": "#64748B",
+        "accent": "#F0FDFA",
+        "accent_foreground": "#0F766E",
+        "destructive": "#EF4444",
+        "destructive_foreground": "#FFFFFF",
+        "border": "#E2E8F0",
+        "input": "#E2E8F0",
+        "ring": "#0F766E"
+      },
+      "dark": {
+        "background": "#000000",
+        "foreground": "#F9FAFB",
+        "card": "#1C1C1E",
+        "card_foreground": "#F9FAFB",
+        "primary": "#2DD4BF",
+        "primary_foreground": "#000000",
+        "secondary": "#134E4A",
+        "secondary_foreground": "#2DD4BF",
+        "muted": "#27272A",
+        "muted_foreground": "#9CA3AF",
+        "accent": "#111827",
+        "accent_foreground": "#2DD4BF",
+        "destructive": "#7F1D1D",
+        "destructive_foreground": "#FCA5A5",
+        "border": "#27272A",
+        "input": "#27272A",
+        "ring": "#2DD4BF"
+      },
+      "charts": {
+        "light": ["#0F766E", "#0EA5E9", "#F59E0B", "#EF4444", "#8B5CF6"],
+        "dark": ["#2DD4BF", "#38BDF8", "#FBBF24", "#F87171", "#A78BFA"]
+      }
+    },
+    "spacing": {
+      "container_padding": "p-4 md:p-6",
+      "section_gap": "gap-6",
+      "item_gap": "gap-3",
+      "border_radius": {
+        "card": "rounded-2xl",
+        "button": "rounded-full",
+        "input": "rounded-xl"
+      }
+    },
+    "shadows": {
+      "card": "shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
+      "floating": "shadow-[0_8px_30px_rgba(0,0,0,0.12)]",
+      "glow": "shadow-[0_0_15px_rgba(15,118,110,0.3)]"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-6 rounded-full font-medium transition-transform active:scale-95",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 h-12 px-6 rounded-full font-medium",
+      "ghost": "hover:bg-accent hover:text-accent-foreground h-10 px-4 rounded-full",
+      "fab": "fixed bottom-6 right-6 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center z-50 hover:scale-105 active:scale-95 transition-all"
+    },
+    "cards": {
+      "base": "bg-card text-card-foreground rounded-2xl border border-border/50 shadow-sm p-5",
+      "interactive": "bg-card text-card-foreground rounded-2xl border border-border/50 shadow-sm p-5 hover:border-primary/30 transition-colors cursor-pointer active:scale-[0.99]"
+    },
+    "inputs": {
+      "base": "h-12 rounded-xl bg-muted/50 border-transparent focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all text-lg px-4",
+      "money": "text-3xl font-bold text-center bg-transparent border-none focus:ring-0 placeholder:text-muted-foreground/30 h-20"
+    },
+    "navigation": {
+      "bottom_bar": "fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-xl border-t border-border h-16 flex items-center justify-around z-40 pb-safe"
+    }
+  },
+  "layout_strategies": {
+    "mobile_first": true,
+    "safe_area": "pt-safe-top pb-safe-bottom pl-safe-left pr-safe-right",
+    "max_width": "max-w-md mx-auto md:max-w-2xl lg:max-w-4xl",
+    "grid_system": "grid grid-cols-1 gap-4"
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-white/70 dark:bg-black/70 border border-white/20 dark:border-white/10",
+    "gradients": {
+      "subtle_mesh": "bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background"
+    },
+    "animations": {
+      "page_transition": "animate-in fade-in slide-in-from-bottom-4 duration-300",
+      "swipe_action": "transition-transform duration-200 ease-out"
+    }
+  },
+  "icons": {
+    "library": "lucide-react",
+    "style": "stroke-width={1.5} className='w-6 h-6'"
+  },
+  "feature_specific_ui": {
+    "sync_indicator": {
+      "online": "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]",
+      "offline": "w-2 h-2 rounded-full bg-gray-400",
+      "syncing": "w-2 h-2 rounded-full bg-blue-500 animate-pulse"
+    },
+    "settlement_card": {
+      "container": "bg-gradient-to-br from-slate-900 to-slate-800 text-white dark:from-slate-800 dark:to-slate-900 rounded-2xl p-6 shadow-lg relative overflow-hidden",
+      "highlight": "text-emerald-400 font-bold text-2xl"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Use 'Manrope' from Google Fonts for all headings. Add import to index.css.",
+    "Implement a 'safe-area' utility for iPhone notch/home bar handling.",
+    "Ensure all touch targets are at least 44px x 44px.",
+    "Use 'sonner' for all toast notifications (success, error, sync status).",
+    "For the 'Add Expense' modal, use a drawer/sheet on mobile and a dialog on desktop.",
+    "Implement swipe-to-delete using 'framer-motion' or a dedicated swipe library.",
+    "Charts must be responsive. Use 'recharts' with the defined color palette.",
+    "Dark mode is critical. Test all colors against #000000 background.",
+    "Do not use generic 'alert' or 'confirm'. Use custom styled dialogs.",
+    "The 'Sync Status' should be visible but unobtrusive (e.g., small dot in header).",
+    "Use 'lucide-react' for all icons."
+  ],
+  "universal_guidelines": [
+    "Avoid 'AI slop' - no generic gradients or centered text blocks.",
+    "Use 2-3x more spacing than typical. Whitespace is luxury.",
+    "Micro-animations for every interaction (hover, click, focus).",
+    "Never use pure black (#000000) for cards in dark mode; use #1C1C1E.",
+    "Always use 'data-testid' for interactive elements."
+  ]
+}
