@@ -14,10 +14,10 @@ const BottomNav = () => {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-border/50 bottom-nav"
+      className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-border/50 pb-8"
       data-testid="bottom-nav"
     >
-      <div className="flex items-center justify-around h-14 max-w-md mx-auto">
+      <div className="flex items-center justify-around h-14 max-w-md mx-auto px-4">
         {navItems.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path || 
             (path === '/' && location.pathname === '/dashboard');

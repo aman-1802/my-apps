@@ -155,15 +155,16 @@ async def sync_expense_to_sheet(expense: dict) -> Optional[int]:
         ]
         
         # Append to sheet
-        result = await asyncio.to_thread(
-            sheet.values().append(
+        def do_append():
+            return sheet.values().append(
                 spreadsheetId=GOOGLE_SHEET_ID,
                 range=f"{GOOGLE_SHEET_NAME}!A:O",
                 valueInputOption="USER_ENTERED",
                 insertDataOption="INSERT_ROWS",
                 body={"values": [row_data]}
-            ).execute
-        )
+            ).execute()
+        
+        result = await asyncio.to_thread(do_append)
         
         # Get the row number from the updated range
         updated_range = result.get("updates", {}).get("updatedRange", "")
@@ -199,14 +200,15 @@ async def update_sheet_row(row_number: int, expense: dict) -> bool:
             expense.get("id", "")
         ]
         
-        await asyncio.to_thread(
-            sheet.values().update(
+        def do_update():
+            return sheet.values().update(
                 spreadsheetId=GOOGLE_SHEET_ID,
                 range=f"{GOOGLE_SHEET_NAME}!A{row_number}:O{row_number}",
                 valueInputOption="USER_ENTERED",
                 body={"values": [row_data]}
-            ).execute
-        )
+            ).execute()
+        
+        await asyncio.to_thread(do_update)
         return True
     except Exception as e:
         logger.error(f"Error updating sheet row: {e}")
@@ -219,12 +221,13 @@ async def delete_sheet_row(row_number: int) -> bool:
         sheet = service.spreadsheets()
         
         # Clear the row content instead of deleting to maintain row numbers
-        await asyncio.to_thread(
-            sheet.values().clear(
+        def do_clear():
+            return sheet.values().clear(
                 spreadsheetId=GOOGLE_SHEET_ID,
                 range=f"{GOOGLE_SHEET_NAME}!A{row_number}:O{row_number}"
-            ).execute
-        )
+            ).execute()
+        
+        await asyncio.to_thread(do_clear)
         return True
     except Exception as e:
         logger.error(f"Error deleting sheet row: {e}")
