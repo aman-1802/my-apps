@@ -2,7 +2,7 @@ import { User, Users, CheckCircle, UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const SettlementCards = ({ settlement, onSettleAll }) => {
+const SettlementCards = ({ settlement, onSettleAll, onDeleteAll }) => {
   if (!settlement) return null;
 
   const {
@@ -76,22 +76,37 @@ const SettlementCards = ({ settlement, onSettleAll }) => {
           >
             <div className="flex items-center justify-between mb-2">
               <card.icon className={cn("w-5 h-5", card.textColor)} />
-              {card.settleKey && card.value > 0 && onSettleAll && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-6 px-2 text-xs font-medium hover:bg-white/20"
-                  onClick={() => onSettleAll(card.settleKey)}
-                  data-testid={`settle-all-${card.settleKey.toLowerCase()}`}
-                >
-                  Settle All
-                </Button>
-              )}
             </div>
             <p className="text-xs text-muted-foreground mb-0.5">{card.title}</p>
             <p className={cn("text-xl font-bold", card.textColor)}>
               ₹{card.value.toLocaleString()}
             </p>
+            {card.settleKey && card.value > 0 && (
+              <div className="flex gap-2 mt-2">
+                {onSettleAll && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 px-2 text-xs font-medium bg-white/30 hover:bg-white/50"
+                    onClick={() => onSettleAll(card.settleKey)}
+                    data-testid={`settle-all-${card.settleKey.toLowerCase()}`}
+                  >
+                    Settle
+                  </Button>
+                )}
+                {onDeleteAll && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 px-2 text-xs font-medium bg-red-500/20 hover:bg-red-500/40 text-red-600"
+                    onClick={() => onDeleteAll(card.settleKey)}
+                    data-testid={`delete-all-${card.settleKey.toLowerCase()}`}
+                  >
+                    Delete
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>
