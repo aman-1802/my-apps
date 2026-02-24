@@ -166,11 +166,18 @@ async def sync_expense_to_sheet(expense: dict) -> Optional[int]:
         
         result = await asyncio.to_thread(do_append)
         
-        # Get the row number from the updated range
+        # Get the row number from the updated range (e.g., "Expense_Data!A7:O7" or "Expense_Data!AM1013:AO1013")
         updated_range = result.get("updates", {}).get("updatedRange", "")
         if updated_range:
-            row_number = int(updated_range.split("!")[-1].split(":")[0].replace("A", ""))
-            return row_number
+            try:
+                # Extract row number using regex
+                import re
+                match = re.search(r'(\d+)', updated_range.split("!")[-1])
+                if match:
+                    row_number = int(match.group(1))
+                    return row_number
+            except:
+                pass
         return None
     except Exception as e:
         logger.error(f"Error syncing to sheet: {e}")
