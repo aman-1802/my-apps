@@ -194,6 +194,25 @@ export const settleAllByPerson = async (paidBy) => {
   }
 };
 
+export const deleteAllByPerson = async (paidBy) => {
+  if (!isOnline) {
+    const expenses = await db.getAllExpenses({ to_be_paid_by: paidBy });
+    let count = 0;
+    for (const exp of expenses) {
+      await db.deleteExpense(exp.id);
+      count++;
+    }
+    return { deleted_count: count };
+  }
+  
+  try {
+    return await apiRequest('DELETE', `/expenses/delete-all/${paidBy}`);
+  } catch (error) {
+    console.log('Failed to delete all on server');
+    throw error;
+  }
+};
+
 // Sync functions
 export const syncToServer = async () => {
   if (!isOnline) {
