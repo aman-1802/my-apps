@@ -1,7 +1,8 @@
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import SwipeableExpenseItem from "./SwipeableExpenseItem";
-import { AlertCircle, Clock, CheckCircle2 } from "lucide-react";
+import { AlertCircle, Clock, CheckCircle2, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ExpenseList = ({ expenses, onMarkPaid, onMarkUnpaid, onDelete, onEdit }) => {
   if (!expenses || expenses.length === 0) {
@@ -149,11 +150,25 @@ const ExpenseList = ({ expenses, onMarkPaid, onMarkUnpaid, onDelete, onEdit }) =
                     )}
                   </div>
 
-                  {/* Right: Amount and status */}
+                  {/* Right: Amount, status and delete */}
                   <div className="flex flex-col items-end gap-1">
-                    <span className="text-lg font-bold">
-                      ₹{expense.amount?.toLocaleString()}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-bold">
+                        ₹{expense.amount?.toLocaleString()}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(expense.id);
+                        }}
+                        data-testid={`delete-btn-${expense.id}`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                     
                     <div className={cn(
                       "flex items-center gap-1 text-xs px-2 py-0.5 rounded-full",
