@@ -157,21 +157,26 @@ async def sync_expense_to_sheet(expense: dict) -> Optional[int]:
         sheet = service.spreadsheets()
         
         # Check if this expense ID already exists in sheet (column O)
+      # Check if this expense ID already exists in sheet (column O)
         def check_existing():
             result = sheet.values().get(
                 spreadsheetId=GOOGLE_SHEET_ID,
                 range=f"{GOOGLE_SHEET_NAME}!O:O"
             ).execute()
             values = result.get('values', [])
-            expense_id = expense.get("id", "")
+            # Convert to string and strip spaces for an exact match
+            expense_id = str(expense.get("id", "")).strip()
             for i, row in enumerate(values):
-                if row and row[0] == expense_id:
-                    return i + 1  # Return existing row number
+                if row and str(row[0]).strip() == expense_id:
+                    return i + 1  # Found existing row number
             return None
         
         existing_row = await asyncio.to_thread(check_existing)
-        if existing_row:
-            return existing_row  # Already exists, return row number
+        
+        # STOP the process if the ID is already in the sheet
+        if existing_row is not None:
+            logger.info(f"Duplicate found for ID {expense.get('id')}. Skipping sync.")
+            return existing_row # Already exists, return row number
         
         # Find the next empty row
         def get_next_row():
