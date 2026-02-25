@@ -107,7 +107,7 @@ const ExpenseForm = ({ open, onClose, expense, onSave }) => {
         toast.success('Expense added');
       }
 
-      triggerSync();
+     // triggerSync();//
       onSave();
     } catch (error) {
       console.error('Error saving expense:', error);
