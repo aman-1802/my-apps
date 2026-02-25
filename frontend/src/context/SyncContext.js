@@ -24,7 +24,7 @@ export const SyncProvider = ({ children }) => {
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      toast.success('Back online', { duration: 2000 });
+      toast.success('Back online', { duration: 6000 });
       // Auto-sync when coming back online
       triggerSync();
     };
