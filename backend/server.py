@@ -27,9 +27,17 @@ load_dotenv()
 
 # MongoDB connection
 # MongoDB connection
-mongo_url = os.environ.get('MONGO_URL')
+import urllib.parse
+
+# MongoDB connection
+raw_mongo_url = os.environ.get('MONGO_URL', '')
+# This automatically fixes special characters in your password
+mongo_url = raw_mongo_url.replace(
+    raw_mongo_url.split(':')[2].split('@')[0], 
+    urllib.parse.quote_plus(raw_mongo_url.split(':')[2].split('@')[0])
+) if '@' in raw_mongo_url.split(':')[2] else raw_mongo_url
+
 client = AsyncIOMotorClient(mongo_url)
-# This uses 'ExpenseTracker' as a backup so the app doesn't crash if the name is missing
 db = client[os.environ.get('DB_NAME', 'ExpenseTracker')]
 # Google Sheets Setup
 GOOGLE_SHEET_ID = os.environ.get('GOOGLE_SHEET_ID')
